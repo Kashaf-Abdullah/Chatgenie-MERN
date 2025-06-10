@@ -46,7 +46,7 @@ export const verifyUser = async (req, res) => {
         message: "Wrong otp",
       });
 
-    const token = jwt.sign({ _id: verify.user._id }, "kashafsecretkey", {
+    const token = jwt.sign({ _id: verify.user._id }, process.env.Jwt_sec, {
       expiresIn: "5d",
     });
 
