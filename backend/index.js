@@ -6,10 +6,11 @@ dotenv.config()
 const app=express()
 //middleware 
 app.use(express.json())
-app.use(cors({
-  origin: 'http://localhost:5173', // or whatever port your React app runs on
-  credentials: true
-}));
+// app.use(cors({
+//   origin: 'http://localhost:5173', // or whatever port your React app runs on
+//   credentials: true
+// }));
+app.use(cors())
 //importing routes
 import userRoutes from './routes/userRoutes.js'
 import chatRoutes from './routes/chatRoutes.js'
