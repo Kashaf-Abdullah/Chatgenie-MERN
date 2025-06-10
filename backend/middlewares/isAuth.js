@@ -10,7 +10,7 @@ export const isAuth = async (req, res, next) => {
         message: "Please login",
       });
 
-    const decode = jwt.verify(token,"kashafsecretkey");
+    const decode = jwt.verify(token,process.env.Jwt_sec);
 
     req.user = await User.findById(decode._id);
 
