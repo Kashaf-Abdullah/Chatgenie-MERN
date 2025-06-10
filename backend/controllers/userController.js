@@ -12,7 +12,7 @@ if(!user){
 }
 
 const otp=Math.floor(Math.random()*1000000)
- const verifyToken = jwt.sign({ user, otp }, process.env.Activation_sec, {
+ const verifyToken = jwt.sign({ user, otp }, process.env.Activation_Sec, {
       expiresIn: "5m",
     });
 
@@ -34,7 +34,7 @@ export const verifyUser = async (req, res) => {
   try {
     const { otp, verifyToken } = req.body;
 
-    const verify = jwt.verify(verifyToken, process.env.Activation_sec);
+    const verify = jwt.verify(verifyToken, process.env.Activation_Sec);
 
     if (!verify)
       return res.status(400).json({
