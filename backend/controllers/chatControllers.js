@@ -1,6 +1,59 @@
 import { Chat } from "../models/Chat.js";
 import { Conversation } from "../models/Conversation.js";
 
+export const generateResponse = async (req, res) => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return res.status(503).json({
+      message: "Gemini API key is not configured on the server.",
+    });
+  }
+
+  const prompt = req.body?.prompt;
+  if (typeof prompt !== "string" || !prompt.trim()) {
+    return res.status(400).json({
+      message: "A prompt is required.",
+    });
+  }
+
+  try {
+    const url = new URL(
+      `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || "gemini-2.5-flash-lite"}:generateContent`
+    );
+    url.searchParams.set("key", apiKey);
+
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+      }),
+    });
+    const result = await response.json();
+
+    if (!response.ok) {
+      return res.status(502).json({
+        message: result?.error?.message || "Gemini API request failed.",
+      });
+    }
+
+    const answer = result?.candidates?.[0]?.content?.parts
+      ?.map((part) => part.text || "")
+      .join("");
+    if (!answer) {
+      return res.status(502).json({
+        message: "Gemini returned an empty response.",
+      });
+    }
+
+    res.json({ answer });
+  } catch {
+    res.status(502).json({
+      message: "Unable to reach Gemini API.",
+    });
+  }
+};
+
 export const createChat = async (req, res) => {
   try {
     const userId = req.user._id;

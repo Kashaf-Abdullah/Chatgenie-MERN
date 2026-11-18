@@ -4,11 +4,10 @@ import { ChatData } from "../context/ChatContext";
 const Header = () => {
   const { chats } = ChatData();
   return (
-    <div>
-      <p className="text-lg mb-6">Hello, How can i help you today?</p>
-      {chats && chats.length === 0 && (
-        <p className="text-lg mb-6">Create new chat to continue</p>
-      )}
+    <div className="min-w-0 flex-1 md:flex-none">
+      <p className="truncate text-sm font-medium text-slate-200 md:text-base">
+        {chats && chats.length === 0 ? "Create a chat to get started" : "Chat with ChatGenie"}
+      </p>
     </div>
   );
 };

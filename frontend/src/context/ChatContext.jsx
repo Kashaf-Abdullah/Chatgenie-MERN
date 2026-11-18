@@ -4,7 +4,6 @@ import { server } from "../main";
 import toast from "react-hot-toast";
 
 const ChatContext = createContext();
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 export const ChatProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
@@ -17,36 +16,31 @@ export const ChatProvider = ({ children }) => {
       toast.error("Create a chat before sending a message.");
       return;
     }
-    if (!GEMINI_API_KEY) {
-      toast.error("Gemini API key is missing. Set VITE_GEMINI_API_KEY in frontend/.env and restart Vite.");
-      return;
-    }
     setNewRequestLoading(true);
     setPrompt("");
     try {
-      const response = await axios({
-        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${GEMINI_API_KEY}`,
-        method: "post",
-        data: {
-          contents: [{ parts: [{ text: prompt }] }],
+      const { data } = await axios.post(
+        `${server}/api/chat/generate`,
+        { prompt },
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+          },
         },
-      });
+      );
 
       const message = {
         question: prompt,
-        answer:
-          response["data"]["candidates"][0]["content"]["parts"][0]["text"],
+        answer: data.answer,
       };
 
       setMessages((prev) => [...prev, message]);
-      setNewRequestLoading(false);
 
-      const { data } = await axios.post(
+      await axios.post(
         `${server}/api/chat/${selected}`,
         {
           question: prompt,
-          answer:
-            response["data"]["candidates"][0]["content"]["parts"][0]["text"],
+          answer: data.answer,
         },
         {
           headers: {
@@ -55,8 +49,10 @@ export const ChatProvider = ({ children }) => {
         }
       );
     } catch (error) {
-      alert("someting went wrong");
-      console.log(error);
+      toast.error(
+        error.response?.data?.message || "Unable to generate a response."
+      );
+    } finally {
       setNewRequestLoading(false);
     }
   }
@@ -86,7 +82,7 @@ export const ChatProvider = ({ children }) => {
   async function createChat() {
     setCreateLod(true);
     try {
-      const { data } = await axios.post(
+      await axios.post(
         `${server}/api/chat/new`,
         {},
         {
@@ -98,7 +94,7 @@ export const ChatProvider = ({ children }) => {
 
       fetchChats();
       setCreateLod(false);
-    } catch (error) {
+    } catch {
       toast.error("some went wrong");
       setCreateLod(false);
     }
