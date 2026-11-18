@@ -18,7 +18,7 @@ export const generateResponse = async (req, res) => {
 
   try {
     const url = new URL(
-      `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || "gemini-2.5-flash-lite"}:generateContent`
+      `https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || "gemini-3.5-flash-lite"}:generateContent`
     );
     url.searchParams.set("key", apiKey);
 
