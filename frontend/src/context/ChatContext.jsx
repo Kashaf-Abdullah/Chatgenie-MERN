@@ -13,11 +13,19 @@ export const ChatProvider = ({ children }) => {
 
   async function fetchResponse() {
     if (prompt === "") return alert("Write prompt");
+    if (!selected) {
+      toast.error("Create a chat before sending a message.");
+      return;
+    }
+    if (!GEMINI_API_KEY) {
+      toast.error("Gemini API key is missing. Set VITE_GEMINI_API_KEY in frontend/.env and restart Vite.");
+      return;
+    }
     setNewRequestLoading(true);
     setPrompt("");
     try {
       const response = await axios({
-         url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
+        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${GEMINI_API_KEY}`,
         method: "post",
         data: {
           contents: [{ parts: [{ text: prompt }] }],
@@ -66,7 +74,8 @@ export const ChatProvider = ({ children }) => {
       });
 
       setChats(data);
-      setSelected(data[0]._id);
+      setSelected(data[0]?._id ?? null);
+      if (data.length === 0) setMessages([]);
     } catch (error) {
       console.log(error);
     }
@@ -98,6 +107,12 @@ export const ChatProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   async function fetchMessages() {
+    if (!selected) {
+      setMessages([]);
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
       const { data } = await axios.get(`${server}/api/chat/${selected}`, {

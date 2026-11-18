@@ -16,9 +16,9 @@ export const UserProvider = ({ children }) => {
       toast.success(data.message);
       localStorage.setItem("verifyToken", data.verifyToken);
       navigate("/verify");
-      setBtnLoading(false);
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || error.message || "Unable to log in");
+    } finally {
       setBtnLoading(false);
     }
   }
@@ -30,7 +30,11 @@ export const UserProvider = ({ children }) => {
     const verifyToken = localStorage.getItem("verifyToken");
     setBtnLoading(true);
 
-    if (!verifyToken) return toast.error("Please give token");
+    if (!verifyToken) {
+      toast.error("Please give token");
+      setBtnLoading(false);
+      return;
+    }
     try {
       const { data } = await axios.post(`${server}/api/user/verify`, {
         otp,
@@ -41,12 +45,12 @@ export const UserProvider = ({ children }) => {
       localStorage.clear();
       localStorage.setItem("token", data.token);
       navigate("/");
-      setBtnLoading(false);
       setIsAuth(true);
       setUser(data.user);
       fetchChats();
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || error.message || "Unable to verify");
+    } finally {
       setBtnLoading(false);
     }
   }

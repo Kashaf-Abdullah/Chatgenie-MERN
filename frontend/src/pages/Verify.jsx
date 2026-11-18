@@ -3,22 +3,20 @@ import { useState } from 'react';
 import { UserData } from '../context/UserContext';
 import { LoadingSpinner } from "../components/Loading";
 import { useNavigate } from 'react-router-dom';
+import { ChatData } from '../context/ChatContext';
 
 const Verify = () => {
     const [otp, setOtp] = useState("");
 
   const { verifyUser, btnLoading } = UserData();
 
-  // const { fetchChats } = ChatData();
+  const { fetchChats } = ChatData();
 
   const navigate = useNavigate();
 
   const submitHandler = (e) => {
     e.preventDefault();
-    console.log(otp)
-    verifyUser(Number(otp), navigate, 
-    // fetchChats
-  );
+    verifyUser(Number(otp), navigate, fetchChats);
   };
   return (
    <div className="flex justify-center items-center h-screen">

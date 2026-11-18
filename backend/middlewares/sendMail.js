@@ -5,8 +5,8 @@ const sendMail = async (email, subject, otp) => {
     host: "smtp.gmail.com",
     port: 465,
     auth: {
-      user: "kashafabdullah01@gmail.com",
-      pass: "kbah wdtf hqzi ximy",
+      user: process.env.Gmail,
+      pass: process.env.Gmail_App_Password,
     },
   });
 

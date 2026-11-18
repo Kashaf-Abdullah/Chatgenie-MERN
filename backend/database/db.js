@@ -1,15 +1,17 @@
 // ILl5EPmAbxUXi5Dl
 import mongoose from "mongoose";
-const connectDb=async()=>{
-    try{
-await  mongoose.connect(process.env.MONGO_URI,{
-    dbName:"ChatbotMern"
-})
 
-console.log("mongdb connected")
+const connectDb = async () => {
+    const uri = process.env.MONGO_URI;
+    if (!uri) {
+        throw new Error("MONGO_URI is missing. Add it to backend/.env (see backend/.env.example).");
     }
-    catch(err){
-        console.log(err)
-    }
-}
+
+    await mongoose.connect(uri, {
+        dbName: "ChatbotMern"
+    });
+
+    console.log("MongoDB connected");
+};
+
 export default connectDb
