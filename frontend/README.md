@@ -4,10 +4,16 @@ This template provides a minimal setup to get React working in Vite with HMR and
 
 ## Environment setup
 
-Create a `.env` file in this directory using `.env.example` as a template, then set
-`VITE_GEMINI_API_KEY` to your Gemini API key. Restart the Vite dev server after
-changing environment variables. Vite exposes `VITE_` variables in the browser
-bundle, so use a key restricted appropriately for your deployment.
+Create a `.env` file in this directory using `.env.example` as a template. Set
+`VITE_SERVER_URL` to your backend URL (the app defaults to the deployed Chatgenie
+backend when this is unset) and set `VITE_GEMINI_API_KEY` to your Gemini API key.
+Restart the Vite dev server after changing environment variables. Vite exposes
+`VITE_` variables in the browser bundle, so do not put a private API key here in
+production; proxy Gemini requests through the backend instead.
+
+For the deployed frontend, set `VITE_SERVER_URL` to
+`https://chatgenie-mern.vercel.app` in the frontend host's environment variables,
+then redeploy.
 
 Currently, two official plugins are available:
 

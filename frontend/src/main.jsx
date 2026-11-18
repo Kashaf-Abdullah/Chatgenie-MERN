@@ -5,9 +5,8 @@ import "./index.css";
 import { UserProvider } from "./context/UserContext.jsx";
 import { ChatProvider } from "./context/ChatContext.jsx";
 
-export const server = "http://localhost:5000";
-
-// export const server = "https://chatgenie-mern-production.up.railway.app";
+export const server =
+  import.meta.env.VITE_SERVER_URL || "https://chatgenie-mern.vercel.app";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <UserProvider>
